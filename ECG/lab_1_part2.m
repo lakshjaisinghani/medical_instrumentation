@@ -14,7 +14,6 @@ ECG_signal = data(:, 1);       % use only 5 minute data
 % time specification
 time = 0:1/Fs:length(ECG_signal)/Fs-1/Fs;         
 
-
 %% Clean signal
 % filter specs
 window_size = 50; 
@@ -44,7 +43,7 @@ range = 5:5:310; % 5 min
 avg_hr = find_avg_hr(ECG_signal_filtered, time, range, 1.9, false);
 
 figure; % plot
-stairs(range, avg_hr)
+plot(range, avg_hr)
 xlabel("Time (s)")
 ylabel("Heart Rate (bpm)")
 xlim([5, 310])
@@ -52,15 +51,14 @@ ylim([60, 75])
 title("Heart Rate (5s average)")
 
 %% plot the R-R interval
-avg_rr_interval = 1./(avg_hr ./60);
-
+avg_rr_interval = diff(peak_times);
 figure;
-stairs(range, avg_rr_interval)
+stairs(avg_rr_interval)
+xlim([0, 310])
 xlabel("Time (s)")
 ylabel("R-R interval (s)")
-xlim([5, 310])
-ylim([0.8, 0.95])
-title("R-R interval (5s average)")
+title("R-R interval")
 
-%%
+%% FFT of R-R intervals
+
 
