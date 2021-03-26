@@ -52,13 +52,41 @@ title("Heart Rate (5s average)")
 
 %% plot the R-R interval
 avg_rr_interval = diff(peak_times);
+rt = data(:, 2);
+
+% filter specs
+window_size = 10; 
+b = (1/window_size)*ones(1,window_size);
+a = 1; 
+
+avg_rr_interval = filter(b,a,avg_rr_interval);
+avg_rr_interval = avg_rr_interval(22:end);
+
 figure;
 stairs(avg_rr_interval)
-xlim([0, 310])
 xlabel("Time (s)")
 ylabel("R-R interval (s)")
 title("R-R interval")
 
 %% FFT of R-R intervals
+
+% remove large signal offset
+rr_signal = avg_rr_interval - mean(avg_rr_interval);
+
+% FFT variables
+n = length(rr_signal);
+fshift = (-n/2:n/2-1)*(5/n); 
+
+% do an FFT and shift frequencies
+fft_rr = fftshift(fft(rr_signal));
+p = abs(fft_rr).^2 * (1/n); % mV^2
+
+figure;
+bar(fshift, p)
+ylim([0, 0.18])
+xlim([-0.8, 0.8])
+xlabel("Frequency (Hz)")
+ylabel("Magnitude (mV^2)")
+title("FFT of R-R Interval")
 
 
