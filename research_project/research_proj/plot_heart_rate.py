@@ -4,8 +4,11 @@ import matplotlib.pyplot as plt
 from drawnow import *
 import time
 import re
+import csv
 import scipy.signal as signal
 plt.ion()
+
+thresh = 10    
 
 ECG_data = []
 HR_data  = []
@@ -23,13 +26,17 @@ start_time = 0
 end_time   = 0
 switch     = 0
 
-def makeFig(): #Create a function that makes our desired plot
-    plt.ylim(0,100)                                 #Set y min and max values
-    plt.title('Current Heart Rate: ' + str(round(HR_print[-1])) + 'BPM')      #Plot the title
-    plt.grid(True)                                  #Turn the grid on
-    plt.ylabel('Heart Rate')                            #Set ylabels
-    plt.plot(HR_print, 'ro-', label='BPM')       #plot the height array
-    plt.legend(loc='upper left')                    #plot the legend
+def makeFig():
+    plt.ylim(0,150)                               
+    plt.title('Current Heart Rate: ' + str(round(HR_print[-1])) + 'BPM')     
+    plt.grid(True)                                 
+    plt.ylabel('Heart Rate')                            
+    plt.plot(HR_print, 'ro-', label='BPM')      
+    plt.legend(loc='upper left')                    
+
+with open("ecg.csv", 'w', newline='') as file :
+    writer = csv.writer(file)
+    writer.writerow(['Time', 'ECG'])
 
 while True:
     while (arduinoData.inWaiting()==0): 
@@ -44,10 +51,14 @@ while True:
         if ECG:
             ECG_data.append(ECG)
 
+            with open("ecg.csv", 'a', newline='') as file :
+                writer = csv.writer(file)
+                writer.writerow([time.time(), ECG])
+
         peaks, _ = signal.find_peaks(np.array(ECG_data), distance=10)
 
         
-        if ECG_data[peaks[0]] > 12:
+        if ECG_data[peaks[0]] > thresh:
             curr_peak = ECG_data[peaks[0]]
 
         HR = 0
@@ -57,15 +68,16 @@ while True:
             prev_peak = curr_peak
 
         if curr_peak != prev_peak and not switch:
-            HR = (time.time() - start_time) * 60
+            HR = (1/(time.time() - start_time)) * 60
             switch = 1 
             prev_peak = curr_peak
 
         if HR > 30 and HR < 200:
             HR_data.append(HR)
 
+
             cnt_hr_1 += 1
-            if cnt_hr_1 > 5:
+            if cnt_hr_1 > 7:
                 HR_data.pop(0)
             
             mean_hr = np.mean(np.array(HR_data))

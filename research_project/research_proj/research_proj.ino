@@ -15,7 +15,15 @@ float b_lp[2] = {0, 0.4665};
 float a_lp[2] = {1, -0.5335};
 float lp_in[2];
 float lp_out[2];
+
+float hp_out_sig;
+float b_hp[2] = {0, -1.0000};
+float a_hp[2] = {1, -0.0592};
+float hp_in[2];
+float hp_out[2];
+
 dig_comp lpfil(b_lp, a_lp, lp_in, lp_out, 2, 2);
+dig_comp hpfil(b_hp, a_hp, hp_in, hp_out, 2, 2);
 
 // find maxima
 float prev_val = 0.0;
