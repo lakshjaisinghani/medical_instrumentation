@@ -9,7 +9,7 @@ H_LP_discrete = c2d(H_LP, 0.01);
 
 % Low pass -> 45 Hz
 % y(n+1) = 0.05916 * y(n) + 0.9408 * u(n)
-fc    = 500; % Hz
+fc    = 45; % Hz
 omega = 2*pi*fc;
 num   = [1 0];
 denum = [1 omega];
