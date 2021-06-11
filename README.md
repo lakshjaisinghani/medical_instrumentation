@@ -34,7 +34,6 @@ The aim of this project was to build an ECG amplifier using digital signal proce
   <img src="./images/ltspice.png">
 </p>
 
-![ltspice circuit]()
 # Analog signal precessing results 
 After each filtering stage:
 <p align="center">
